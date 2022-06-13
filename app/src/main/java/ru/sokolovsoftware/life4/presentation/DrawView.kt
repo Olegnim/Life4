@@ -58,19 +58,20 @@ internal class DrawView(context: Context?, listOfUnicellular: MutableList<Unicel
           unicellularData.calculateLife()
           listOfUnicellular = unicellularData.getListOfUnicellular()
           for (unicellular in listOfUnicellular) {
+            if (!unicellular.live) continue
             val paint = Paint()
             paint.style = Paint.Style.FILL
             if (unicellular.type == TypeUnicellular.RED) paint.color = Color.RED
             if (unicellular.type == TypeUnicellular.GREEN) paint.color = Color.GREEN
             if (unicellular.type == TypeUnicellular.LIGHT_GREEN) paint.color = Color.GRAY
             if (unicellular.type == TypeUnicellular.BLUE) paint.color = Color.BLUE
-            canvas.drawCircle(unicellular.cx, unicellular.cy, unicellular.age.toFloat(), paint)
+            canvas.drawCircle(unicellular.cx, unicellular.cy, unicellular.size.toFloat(), paint)
           }
           val paint = Paint()
           paint.color = Color.BLACK
           paint.textAlign = Paint.Align.RIGHT
           paint.textSize = 120F;
-          canvas.drawText(unicellularData.lifeLoop.toString(), 200F, 200F, paint)
+          canvas.drawText(unicellularData.getListOfUnicellular().size.toString(), 200F, 200F, paint)
         } finally {
           if (canvas != null) {
             surfaceHolder.unlockCanvasAndPost(canvas)

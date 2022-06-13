@@ -11,7 +11,10 @@ class Unicellular(
   var steps: Int = 0,
   var directionPath: Int = (1..360).random(),
   val type: TypeUnicellular = TypeUnicellular.LIGHT_GREEN,
-  var age: Int = 10,
+  var size: Int = 10,
+  var age: Int = 1,
+  var satiety : Int = 0,
+  var live : Boolean = true
 )
 
 

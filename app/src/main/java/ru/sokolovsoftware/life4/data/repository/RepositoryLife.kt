@@ -6,61 +6,88 @@ import android.os.SystemClock
 import ru.sokolovsoftware.life4.domain.models.TypeUnicellular
 import ru.sokolovsoftware.life4.domain.models.Unicellular
 import ru.sokolovsoftware.life4.domain.repository.DataLife
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 
 class RepositoryLife : DataLife {
   private var unicellularList: MutableList<Unicellular> = ArrayList()
+  private var copyUnicellularList: MutableList<Unicellular> = ArrayList()
   var lifeLoop = 0
-  val lifeCycle = 30
+  private val lifeCycle = 30
   private val sleep = 100
   private var prevTime: Long = SystemClock.uptimeMillis()
   private var canvasHeight: Int = Resources.getSystem().displayMetrics.heightPixels
   private var canvasWidth: Int = Resources.getSystem().displayMetrics.widthPixels
 
   override fun calculateLife() {
-    var stepsQuantity: IntRange = (50..150)
+    val stepsQuantity: IntRange = (50..150)
     val currentTime: Long = SystemClock.uptimeMillis()
     if (currentTime <= prevTime + sleep) return else prevTime = SystemClock.uptimeMillis()
     lifeLoop++
     for (unicellular in unicellularList) {
       if (lifeLoop == lifeCycle) {
-        if (unicellular.type != TypeUnicellular.LIGHT_GREEN) unicellular.age += 1
+        if (unicellular.type != TypeUnicellular.LIGHT_GREEN) unicellular.size += 1
       }
       if (unicellular.type == TypeUnicellular.LIGHT_GREEN) continue
       unicellular.cx =
-        (unicellular.cx + (1..5).random() + 10 * Math.cos(Math.toRadians(unicellular.directionPath.toDouble()))).toFloat()
+        (unicellular.cx + (1..5).random() + 10 * cos(Math.toRadians(unicellular.directionPath.toDouble()))).toFloat()
       unicellular.cy =
-        (unicellular.cy + (1..5).random() + 10 * Math.sin(Math.toRadians(unicellular.directionPath.toDouble()))).toFloat()
+        (unicellular.cy + (1..5).random() + 10 * sin(Math.toRadians(unicellular.directionPath.toDouble()))).toFloat()
       unicellular.steps++
       if (unicellular.steps > stepsQuantity.random()) {
         unicellular.steps = 0
         if (unicellular.directionPath < 260) {
-          unicellular.directionPath += (30..90).random()
+          unicellular.directionPath += (45..90).random()
         } else {
-          unicellular.directionPath -= (30..90).random()
+          unicellular.directionPath -= (45..90).random()
         }
       }
-      if (unicellular.cx + unicellular.age > canvasWidth) {
-        unicellular.cx = canvasWidth - unicellular.age - 10F
+      if (unicellular.cx + unicellular.size > canvasWidth) {
+        unicellular.cx = canvasWidth - unicellular.size - 10F
         unicellular.directionPath = changePath(unicellular.directionPath)
         unicellular.steps = 0
       }
-      if (unicellular.cy + unicellular.age > canvasHeight) {
-        unicellular.cy = canvasHeight - unicellular.age - 10F
+      if (unicellular.cy + unicellular.size > canvasHeight) {
+        unicellular.cy = canvasHeight - unicellular.size - 10F
         unicellular.directionPath = changePath(unicellular.directionPath)
         unicellular.steps = 0
       }
-      if (unicellular.cx <= 5 + unicellular.age) {
-        unicellular.cx = unicellular.age + 10F
+      if (unicellular.cx <= 5 + unicellular.size) {
+        unicellular.cx = unicellular.size + 10F
         unicellular.directionPath = changePath(unicellular.directionPath)
         unicellular.steps = 0
       }
-      if (unicellular.cy <= 5 + unicellular.age) {
-        unicellular.cy = unicellular.age + 10F
+      if (unicellular.cy <= 5 + unicellular.size) {
+        unicellular.cy = unicellular.size + 10F
         unicellular.directionPath = changePath(unicellular.directionPath)
         unicellular.steps = 0
+      }
+      if (unicellular.type == TypeUnicellular.RED) {
+        for (unicellular2 in unicellularList) {
+          val distanceX = abs(unicellular.cx - unicellular2.cx)
+          val distanceY = abs(unicellular.cy - unicellular2.cy)
+          val distance = hypot(distanceX, distanceY)
+          val r = (unicellular.size + unicellular2.size)
+          if ((distance < r) && unicellular2.live
+            && unicellular2.type != TypeUnicellular.LIGHT_GREEN
+            && unicellular2.type != TypeUnicellular.RED
+          ) {
+            unicellular2.live = false
+            unicellular.size += (unicellular2.size / 4)
+            unicellular.satiety++
+          }
+        }
       }
     }
+    copyUnicellularList.clear()
+    for (unicellular in unicellularList) {
+      if (unicellular.live) copyUnicellularList.add(unicellular)
+    }
+    unicellularList.clear()
+    unicellularList.addAll(copyUnicellularList)
     if (lifeLoop == lifeCycle) lifeLoop = 0
   }
 
@@ -69,14 +96,6 @@ class RepositoryLife : DataLife {
     if (directionPath <= 180) result += (120..170).random() else result -= (120..170).random()
     return result
   }
-
-/*  private fun calculateCenterCircleSmall(sizeCircle: Int, center: Point, angle: Double): Point? {
-    //x0,y0 - центр, a - угол, r - радиус.
-    val radius = sizeCircle / 2
-    val x = (center.x + radius * cos(Math.toRadians(angle))) as Int
-    val y = (center.y + radius * Math.sin(Math.toRadians(angle))) as Int
-    return Point(x, y)
-  }*/
 
   override fun createUnicellular(unicellular: Unicellular) {
     if (unicellular.cx == 0F) unicellular.cx = (0..canvasWidth).random().toFloat()

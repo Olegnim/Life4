@@ -21,8 +21,10 @@ class MainActivity : AppCompatActivity() {
       listUnicellular.add(Unicellular("Vasya$i", type = TypeUnicellular.RED))
       listUnicellular.add(Unicellular("Piter$i", type = TypeUnicellular.BLUE))
     }
+    var y = 1
     for (i in 1..1000) {
-      listUnicellular.add(Unicellular("bacteria$i", size = 3))
+      if (y < 190) y ++ else y = 0
+      listUnicellular.add(Unicellular("bacteria$i", size = 2, age = y))
     }
     return listUnicellular
   }

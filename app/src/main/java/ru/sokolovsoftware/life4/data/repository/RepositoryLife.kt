@@ -90,14 +90,16 @@ class RepositoryLife : DataLife {
             && unicellular.satiety <= redFullSatiety
           ) {
             unicellular2.live = false
-            if (unicellular.size < 30) unicellular.size += 4
+            if (unicellular.size < 25) unicellular.size += 2
             unicellular.satiety++
           } else if (hasContact && unicellular2.live
             && sameTypeUnicellular && notSelf
           ) {
             unicellular2.directionPath = changePath(unicellular2.directionPath)
           } else if (hasContact && unicellular2.live
-            && unicellular2.type == TypeUnicellular.LIGHT_GREEN && notSelf
+            && (unicellular2.type == TypeUnicellular.LIGHT_GREEN && notSelf
+              || unicellular2.type == TypeUnicellular.GREEN && unicellular.satiety >= redFullSatiety && notSelf
+              || unicellular2.type == TypeUnicellular.BLUE && unicellular.satiety >= redFullSatiety && notSelf)
           ) {
             if (unicellular.directionPath in rightDownSector) {
               unicellular2.cx += unicellular.size / 2
@@ -120,11 +122,11 @@ class RepositoryLife : DataLife {
           val hasContact = unicellularHasContact(unicellular, unicellular2)
           val sameTypeUnicellular = unicellular.type == unicellular2.type
           val notSelf = unicellular.genId != unicellular2.genId
-          if (hasContact && unicellular2.live && unicellular.satiety <= greenFullSatiety
+          if (hasContact && unicellular2.live
             && unicellular2.type == TypeUnicellular.LIGHT_GREEN
           ) {
             unicellular2.live = false
-            if (unicellular.size < 30) unicellular.size += 1
+            if (unicellular.size < 15) unicellular.size += 1
             unicellular.satiety++
           } else if (hasContact && unicellular2.live && sameTypeUnicellular && notSelf) {
             unicellular2.directionPath = changePath(unicellular2.directionPath)
@@ -154,16 +156,18 @@ class RepositoryLife : DataLife {
           val sameTypeUnicellular = unicellular.type == unicellular2.type
           val notSelf = unicellular.genId != unicellular2.genId
           if (hasContact && unicellular2.live && unicellular.satiety <= blueFullSatiety &&
-            (unicellular2.type == TypeUnicellular.GREEN
+            (unicellular2.type == TypeUnicellular.GREEN || unicellular2.type == TypeUnicellular.LIGHT_GREEN
               || unicellular2.type == TypeUnicellular.RED && unicellular2.size < unicellular.size)
           ) {
             unicellular2.live = false
-            if (unicellular.size < 30) unicellular.size += 2
+            if (unicellular.size < 20) unicellular.size += 2
             unicellular.satiety++
           } else if (hasContact && unicellular2.live && sameTypeUnicellular && notSelf) {
             unicellular2.directionPath = changePath(unicellular2.directionPath)
           } else if (hasContact && unicellular2.live
-            && unicellular2.type == TypeUnicellular.LIGHT_GREEN && notSelf
+            && (unicellular2.type == TypeUnicellular.LIGHT_GREEN && notSelf
+            || unicellular2.type == TypeUnicellular.GREEN && unicellular.satiety >= blueFullSatiety && notSelf
+            || unicellular2.type == TypeUnicellular.RED && unicellular.satiety >= blueFullSatiety && notSelf)
           ) {
             if (unicellular.directionPath in rightDownSector) {
               unicellular2.cx += unicellular.size / 2
@@ -188,13 +192,13 @@ class RepositoryLife : DataLife {
         unicellular.live = false
         var l: Int = 2
         if (unicellularList.size > 1500) l = 1
-        if (unicellularList.size < 700) l = 3
+        if (unicellularList.size < 700) l = 4
         for (i in 1..l) copyUnicellularList.add(
           Unicellular(
             name = "NewNuc$unicellular.name$i",
             cx = (10..canvasWidth).random().toFloat(),
             cy = (10..canvasHeight).random().toFloat(),
-            size = 3
+            size = 2
           )
         )
       } else if (unicellular.age > 400 && unicellular.type != TypeUnicellular.LIGHT_GREEN && unicellular.type == TypeUnicellular.RED) {

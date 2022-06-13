@@ -60,18 +60,31 @@ internal class DrawView(context: Context?, listOfUnicellular: MutableList<Unicel
           for (unicellular in listOfUnicellular) {
             if (!unicellular.live) continue
             val paint = Paint()
-            paint.style = Paint.Style.FILL
+
             if (unicellular.type == TypeUnicellular.RED) paint.color = Color.RED
             if (unicellular.type == TypeUnicellular.GREEN) paint.color = Color.GREEN
-            if (unicellular.type == TypeUnicellular.LIGHT_GREEN) paint.color = Color.GRAY
-            if (unicellular.type == TypeUnicellular.BLUE) paint.color = Color.BLUE
+            if (unicellular.type == TypeUnicellular.LIGHT_GREEN) {
+              paint.color = Color.LTGRAY
+              paint.style = Paint.Style.STROKE
+              paint.strokeWidth = 2F
+            } else {
+              paint.style = Paint.Style.FILL
+            }
+            if (unicellular.type == TypeUnicellular.BLUE) paint.color = Color.CYAN
             canvas.drawCircle(unicellular.cx, unicellular.cy, unicellular.size.toFloat(), paint)
           }
           val paint = Paint()
           paint.color = Color.BLACK
-          paint.textAlign = Paint.Align.RIGHT
-          paint.textSize = 120F;
-          canvas.drawText(unicellularData.getListOfUnicellular().size.toString(), 200F, 200F, paint)
+          paint.textAlign = Paint.Align.LEFT
+          paint.textSize = 50F
+          val k: Int = unicellularData.getListOfUnicellular().size
+          canvas.drawText("Quantity unicellular: $k pcs", 100F, 100F, paint)
+          val paint2 = Paint()
+          paint2.color = Color.BLACK
+          paint2.textAlign = Paint.Align.LEFT
+          paint2.textSize = 50F
+          val x: Long = unicellularData.globalCycle
+          canvas.drawText("Global Cycle: $x", 100F, 150F, paint2)
         } finally {
           if (canvas != null) {
             surfaceHolder.unlockCanvasAndPost(canvas)

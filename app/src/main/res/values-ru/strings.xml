@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Эмулятор одноклеточных</string>
+    <string name="qty_unicellular">Кол-во одноклеточных</string>
+    <string name="global_cycle">Циклы</string>
+    <string name="pcs">шт</string>
+</resources>

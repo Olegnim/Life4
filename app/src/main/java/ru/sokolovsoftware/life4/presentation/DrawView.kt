@@ -1,16 +1,20 @@
 package ru.sokolovsoftware.life4.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.core.content.ContextCompat.getString
+import ru.sokolovsoftware.life4.R
 import ru.sokolovsoftware.life4.data.repository.RepositoryLife
 import ru.sokolovsoftware.life4.domain.models.TypeUnicellular
 import ru.sokolovsoftware.life4.domain.models.Unicellular
 
 
+@SuppressLint("ViewConstructor")
 internal class DrawView(context: Context?, listOfUnicellular: MutableList<Unicellular>) :
   SurfaceView(context), SurfaceHolder.Callback {
   private var drawThread: DrawThread? = null
@@ -34,7 +38,7 @@ internal class DrawView(context: Context?, listOfUnicellular: MutableList<Unicel
       try {
         drawThread!!.join()
         retry = false
-      } catch (e: InterruptedException) {
+      } catch (_: InterruptedException) {
       }
     }
   }
@@ -78,13 +82,16 @@ internal class DrawView(context: Context?, listOfUnicellular: MutableList<Unicel
           paint.textAlign = Paint.Align.LEFT
           paint.textSize = 50F
           val k: Int = unicellularData.getListOfUnicellular().size
-          canvas.drawText("Quantity unicellular: $k pcs", 100F, 100F, paint)
+          val qtyText = getString(context, R.string.qty_unicellular)
+          val pcsText = getString(context, R.string.pcs)
+          canvas.drawText("$qtyText: $k $pcsText", 100F, 100F, paint)
           val paint2 = Paint()
           paint2.color = Color.BLACK
           paint2.textAlign = Paint.Align.LEFT
           paint2.textSize = 50F
           val x: Long = unicellularData.globalCycle
-          canvas.drawText("Global Cycle: $x", 100F, 150F, paint2)
+          val cycleText = getString(context, R.string.global_cycle)
+          canvas.drawText("$cycleText : $x", 100F, 150F, paint2)
         } finally {
           if (canvas != null) {
             surfaceHolder.unlockCanvasAndPost(canvas)
